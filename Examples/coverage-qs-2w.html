@@ -1,0 +1,450 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Examples: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">AutomatedTestCaseGeneration/Examples/DateHelper.go (1.4%)</option>
+				
+				<option value="file1">AutomatedTestCaseGeneration/Examples/Quadratic.go (100.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package Examples
+
+import (
+        "errors"
+        "fmt"
+        "time"
+)
+
+// Note: Go time layout uses the reference time Mon Jan 2 15:04:05 MST 2006.
+const (
+        D_YYMMDD            string = "06-01-02"                // yy-MM-dd
+        D_DDMMyy            string = "02-01-06"                // dd-MM-yy
+        D_YYMMDD_N          string = "06-Jan-02"               // yy-MMM-dd
+        D_DDMMyy_N          string = "02-Jan-06"               // dd-MMM-yy
+        D_YYMMDDHHMMA_N     string = "06-Jan-02, 03:04PM"      // yy-MMM-dd, hh:mma
+        D_DDMMyyHHMMA_N     string = "02-Jan-06, 03:04PM"      // dd-MMM-yy, hh:mma
+        S_YYMMDD            string = "06/01/02"                // yy/MM/dd
+        S_DDMMyy            string = "02/01/06"                // dd/MM/yy
+        S_YYMMDDHHMMA       string = "06/01/02, 03:04PM"       // yy/MM/dd, hh:mma
+        S_DDMMyyHHMMA       string = "02/01/06, 03:04PM"       // dd/MM/yy, hh:mma
+        S_YYMMDDHHMMA_N     string = "06/Jan/02, 03:04PM"      // yy/MMM/dd, hh:mma
+        S_DDMMyyHHMMA_N     string = "02/Jan/06, 03:04PM"      // dd/MMM/yy, hh:mma
+        D_YYYYMMDD          string = "2006-01-02"              // yyyy-MM-dd
+        D_DDMMYYYY          string = "02-01-2006"              // dd-MM-yyyy
+        D_YYYYMMDDHHMMA     string = "2006-01-02, 03:04PM"     // yyyy-MM-dd, hh:mma
+        D_DDMMYYYYHHMMA     string = "02-01-2006, 03:04PM"     // dd-MM-yyyy, hh:mma
+        D_YYYYMMDD_N        string = "2006-Jan-02"             // yyyy-MMM-dd
+        D_DDMMYYYY_N        string = "02-Jan-2006"             // dd-MMM-yyyy
+        D_YYYYMMDDHHMMA_N   string = "2006-Jan-02, 03:04PM"    // yyyy-MMM-dd, hh:mma
+        D_DDMMYYYYHHMMA_N   string = "02-Jan-2006, 03:04PM"    // dd-MMM-yyyy, hh:mma
+        S_YYYYMMDD          string = "2006/01/02"              // yyyy/MM/dd
+        S_DDMMYYYY          string = "02/01/2006"              // dd/MM/yyyy
+        S_YYYYMMDDHHMMA     string = "2006/01/02, 03:04PM"     // yyyy/MM/dd, hh:mma
+        S_DDMMYYYYHHMMA     string = "02/01/2006, 03:04PM"     // dd/MM/yyyy, hh:mma
+        S_YYYYMMDDHHMMA_N   string = "2006/Jan/02, 03:04PM"    // yyyy/MMM/dd, hh:mma
+        S_DDMMYYYYHHMMA_N   string = "02/Jan/2006, 03:04PM"    // dd/MMM/yyyy, hh:mma
+        D_YYMMDDHHMMSSA_N   string = "06-Jan-02, 03:04:05PM"   // yy-MMM-dd, hh:mm:ssa
+        D_DDMMyyHHMMSSA_N   string = "02-Jan-06, 03:04:05PM"   // dd-MMM-yy, hh:mm:ssa
+        S_YYMMDDHHMMSSA     string = "06/01/02, 03:04:05PM"    // yy/MM/dd, hh:mm:ssa
+        S_DDMMyyHHMMSSA     string = "02/01/06, 03:04:05PM"    // dd/MM/yy, hh:mm:ssa
+        S_YYMMDDHHMMSSA_N   string = "06/Jan/02, 03:04:05PM"   // yy/MMM/dd, hh:mm:ssa
+        S_DDMMyyHHMMSSA_N   string = "02/Jan/06, 03:04:05PM"   // dd/MMM/yy, hh:mm:ssa
+        D_YYYYMMDDHHMMSSA   string = "2006-01-02, 03:04:05PM"  // yyyy-MM-dd, hh:mm:ssa
+        D_DDMMYYYYHHMMSSA   string = "02-01-2006, 03:04:05PM"  // dd-MM-yyyy, hh:mm:ssa
+        D_YYYYMMDDHHMMSSA_N string = "2006-Jan-02, 03:04:05PM" // yyyy-MMM-dd, hh:mm:ssa
+        D_DDMMYYYYHHMMSSA_N string = "02-Jan-2006, 03:04:05PM" // dd-MMM-yyyy, hh:mm:ssa
+        S_YYYYMMDDHHMMSSA   string = "2006/01/02, 03:04:05PM"  // yyyy/MM/dd, hh:mm:ssa
+        S_DDMMYYYYHHMMSSA   string = "02/01/2006, 03:04:05PM"  // dd/MM/yyyy, hh:mm:ssa
+        S_YYYYMMDDHHMMSSA_N string = "2006/Jan/02, 03:04:05PM" // yyyy/MMM/dd, hh:mm:ssa
+        S_DDMMYYYYHHMMSSA_N string = "02/Jan/2006, 03:04:05PM" // dd/MMM/yyyy, hh:mm:ssa
+        HHMMA               string = "03:04PM"                 // hh:mma
+        HHMM                string = "03:04"                   // hh:mm
+        HHMMSSA             string = "03:04:05PM"              // hh:mm:ssa
+        HHMMSS              string = "03:04:05"                // hh:mm:ss
+)
+
+// DateHelper encapsulates core date and time manipulation functions.
+type DateHelper struct{}
+
+// NewDateHelper creates and returns a new DateHelper instance.
+func NewDateHelper() *DateHelper <span class="cov8" title="1">{
+        return &amp;DateHelper{}
+}</span>
+
+// PrettifyDate formats a timestamp (in milliseconds) into a human-readable string.
+// If the timestamp is today, it returns time in "03:04 PM" format, otherwise in "02 Jan 03:04 PM" format.
+func (dh *DateHelper) PrettifyDate(timeMillis int64) string <span class="cov0" title="0">{
+        t := time.UnixMilli(timeMillis)
+        var layout string
+        if isToday(t) </span><span class="cov0" title="0">{
+                layout = HHMMA
+        }</span> else<span class="cov0" title="0"> {
+                layout = "02 Jan 03:04 PM"
+        }</span>
+        <span class="cov0" title="0">return t.Format(layout)</span>
+}
+
+// PrettifyDateFromString converts a timestamp string (milliseconds) and formats it.
+func (dh *DateHelper) PrettifyDateFromString(timestampStr string) (string, error) <span class="cov0" title="0">{
+        timestamp, err := parseInt64(timestampStr)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+        <span class="cov0" title="0">return dh.PrettifyDate(timestamp), nil</span>
+}
+
+// GetDateOnly parses a date string in "02/01/2006" (dd/MM/yyyy) format and returns the timestamp in milliseconds.
+func (dh *DateHelper) GetDateOnly(dateStr string) (int64, error) <span class="cov0" title="0">{
+        layout := S_DDMMYYYY
+        t, err := time.ParseInLocation(layout, dateStr, time.Local)
+        if err != nil </span><span class="cov0" title="0">{
+                return 0, err
+        }</span>
+        <span class="cov0" title="0">return t.UnixMilli(), nil</span>
+}
+
+// GetDateOnlyFromTime formats a timestamp (in milliseconds) into "02/01/2006" (dd/MM/yyyy) format.
+func (dh *DateHelper) GetDateOnlyFromTime(timeMillis int64) string <span class="cov0" title="0">{
+        layout := S_DDMMYYYY
+        t := time.UnixMilli(timeMillis)
+        return t.Format(layout)
+}</span>
+
+// GetDateAndTime formats a timestamp (in milliseconds) into "02/01/2006, 03:04 PM" format.
+func (dh *DateHelper) GetDateAndTime(timeMillis int64) string <span class="cov0" title="0">{
+        layout := S_DDMMYYYYHHMMA
+        t := time.UnixMilli(timeMillis)
+        return t.Format(layout)
+}</span>
+
+// GetTimeOnly formats a timestamp (in milliseconds) into "03:04 PM" (hh:mm a) format.
+func (dh *DateHelper) GetTimeOnly(timeMillis int64) string <span class="cov0" title="0">{
+        layout := HHMMA
+        t := time.UnixMilli(timeMillis)
+        return t.Format(layout)
+}</span>
+
+// GetTodayWithTime returns the current date and time in "02/01/2006 15:04:05" format.
+func (dh *DateHelper) GetTodayWithTime() string <span class="cov0" title="0">{
+        layout := "02/01/2006 15:04:05"
+        return time.Now().Format(layout)
+}</span>
+
+// GetToday returns today's date in "02/01/2006" format.
+func (dh *DateHelper) GetToday() string <span class="cov0" title="0">{
+        layout := S_DDMMYYYY
+        return time.Now().Format(layout)
+}</span>
+
+// GetTomorrow returns tomorrow's date in "02/01/2006" format.
+func (dh *DateHelper) GetTomorrow() string <span class="cov0" title="0">{
+        today, _ := time.Parse(S_DDMMYYYY, dh.GetToday())
+        tomorrow := today.AddDate(0, 0, 1)
+        return tomorrow.Format(S_DDMMYYYY)
+}</span>
+
+// getDurationBetween parses two date strings with the provided layout and returns the duration between them.
+func (dh *DateHelper) getDurationBetween(oldStr, newStr string, layout string) (time.Duration, error) <span class="cov0" title="0">{
+        t1, err := time.ParseInLocation(layout, oldStr, time.Local)
+        if err != nil </span><span class="cov0" title="0">{
+                return 0, err
+        }</span>
+        <span class="cov0" title="0">t2, err := time.ParseInLocation(layout, newStr, time.Local)
+        if err != nil </span><span class="cov0" title="0">{
+                return 0, err
+        }</span>
+        <span class="cov0" title="0">return t1.Sub(t2), nil</span>
+}
+
+// GetDaysBetweenTwoDate returns the number of days between two date strings based on the given DateFormat.
+func (dh *DateHelper) GetDaysBetweenTwoDate(oldStr, newStr string, df string) (int64, error) <span class="cov0" title="0">{
+        dur, err := dh.getDurationBetween(oldStr, newStr, df)
+        if err != nil </span><span class="cov0" title="0">{
+                return 0, err
+        }</span>
+        <span class="cov0" title="0">return int64(dur.Hours() / 24), nil</span>
+}
+
+// GetHoursBetweenTwoDate returns the number of hours between two date strings based on the given DateFormat.
+func (dh *DateHelper) GetHoursBetweenTwoDate(oldStr, newStr string, df string) (int64, error) <span class="cov0" title="0">{
+        dur, err := dh.getDurationBetween(oldStr, newStr, df)
+        if err != nil </span><span class="cov0" title="0">{
+                return 0, err
+        }</span>
+        <span class="cov0" title="0">return int64(dur.Hours()), nil</span>
+}
+
+// GetMinutesBetweenTwoDates returns the number of minutes between two date strings based on the given DateFormat.
+func (dh *DateHelper) GetMinutesBetweenTwoDates(oldStr, newStr string, df string) (int64, error) <span class="cov0" title="0">{
+        dur, err := dh.getDurationBetween(oldStr, newStr, df)
+        if err != nil </span><span class="cov0" title="0">{
+                return 0, err
+        }</span>
+        <span class="cov0" title="0">return int64(dur.Minutes()), nil</span>
+}
+
+// ParseAnyDate attempts to parse the input date string using all defined DateFormats.
+// Returns the timestamp in milliseconds for the first successful parse.
+func (dh *DateHelper) ParseAnyDate(dateStr string) (int64, error) <span class="cov0" title="0">{
+        formats := []string{
+                D_YYMMDD, D_DDMMyy, D_YYMMDD_N, D_DDMMyy_N,
+                D_YYMMDDHHMMA_N, D_DDMMyyHHMMA_N, S_YYMMDD, S_DDMMyy,
+                S_YYMMDDHHMMA, S_DDMMyyHHMMA, S_YYMMDDHHMMA_N, S_DDMMyyHHMMA_N,
+                D_YYYYMMDD, D_DDMMYYYY, D_YYYYMMDDHHMMA, D_DDMMYYYYHHMMA,
+                D_YYYYMMDD_N, D_DDMMYYYY_N, D_YYYYMMDDHHMMA_N, D_DDMMYYYYHHMMA_N,
+                S_YYYYMMDD, S_DDMMYYYY, S_YYYYMMDDHHMMA, S_DDMMYYYYHHMMA,
+                S_YYYYMMDDHHMMA_N, S_DDMMYYYYHHMMA_N, D_YYMMDDHHMMSSA_N, D_DDMMyyHHMMSSA_N,
+                S_YYMMDDHHMMSSA, S_DDMMyyHHMMSSA, S_YYMMDDHHMMSSA_N, S_DDMMyyHHMMSSA_N,
+                D_YYYYMMDDHHMMSSA, D_DDMMYYYYHHMMSSA, D_YYYYMMDDHHMMSSA_N, D_DDMMYYYYHHMMSSA_N,
+                S_YYYYMMDDHHMMSSA, S_DDMMYYYYHHMMSSA, S_YYYYMMDDHHMMSSA_N, S_DDMMYYYYHHMMSSA_N,
+                HHMMA, HHMM, HHMMSSA, HHMMSS,
+        }
+
+        for _, format := range formats </span><span class="cov0" title="0">{
+                t, err := time.ParseInLocation(format, dateStr, time.Local)
+                if err == nil </span><span class="cov0" title="0">{
+                        return t.UnixMilli(), nil
+                }</span>
+        }
+        <span class="cov0" title="0">return 0, errors.New("unable to parse date with any known format")</span>
+}
+
+// ParseDate parses the input date string using the specified DateFormat and returns the timestamp in milliseconds.
+func (dh *DateHelper) ParseDate(dateStr string, df string) (int64, error) <span class="cov0" title="0">{
+        t, err := time.ParseInLocation(df, dateStr, time.Local)
+        if err != nil </span><span class="cov0" title="0">{
+                return 0, err
+        }</span>
+        <span class="cov0" title="0">return t.UnixMilli(), nil</span>
+}
+
+// GetDesiredFormat returns the current date formatted with the specified DateFormat.
+func (dh *DateHelper) GetDesiredFormat(df string) string <span class="cov0" title="0">{
+        return time.Now().Format(df)
+}</span>
+
+// GetDesiredFormatFromTime returns the formatted date for the given timestamp (in milliseconds) using the specified DateFormat.
+func (dh *DateHelper) GetDesiredFormatFromTime(df string, timeMillis int64) string <span class="cov0" title="0">{
+        t := time.UnixMilli(timeMillis)
+        return t.Format(df)
+}</span>
+
+// isToday checks if the provided time is on the same day as the current time.
+func isToday(t time.Time) bool <span class="cov0" title="0">{
+        now := time.Now()
+        y1, m1, d1 := now.Date()
+        y2, m2, d2 := t.Date()
+        return y1 == y2 &amp;&amp; m1 == m2 &amp;&amp; d1 == d2
+}</span>
+
+// parseInt64 converts a string into an int64 value.
+func parseInt64(s string) (int64, error) <span class="cov0" title="0">{
+        var i int64
+        _, err := fmt.Sscan(s, &amp;i)
+        if err != nil </span><span class="cov0" title="0">{
+                return 0, err
+        }</span>
+        <span class="cov0" title="0">return i, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package Examples
+
+import (
+        "fmt"
+        "math"
+)
+
+// QuadraticSolver encapsulates core methods for solving quadratic equations.
+type QuadraticSolver struct {
+        // ErrorThreshold is the acceptable error for Newton's Method.
+        ErrorThreshold float64
+}
+
+// NewQuadraticSolver creates a new QuadraticSolver with default error threshold.
+func NewQuadraticSolver() *QuadraticSolver <span class="cov8" title="1">{
+        return &amp;QuadraticSolver{
+                ErrorThreshold: 1e-8,
+        }
+}</span>
+
+// SolveQuadratic solves the quadratic equation: ax^2 + bx + c = 0.
+// It returns a formatted string with the roots or an error if precision is lost.
+func (qs *QuadraticSolver) SolveQuadratic(a, b, c float64) (string, error) <span class="cov8" title="1">{
+        discriminant := b*b - 4*a*c
+
+        // Check for overflow or significant precision loss.
+        if math.IsNaN(discriminant) || discriminant == b*b </span><span class="cov8" title="1">{
+                return "", fmt.Errorf("not enough precision")
+        }</span>
+
+        // For complex roots.
+        <span class="cov8" title="1">if discriminant &lt; 0 </span><span class="cov8" title="1">{
+                sqrtVal := qs.sqrtByNewton(-discriminant)
+                realPart := (-b) / (2 * a)
+                imaginaryPart := sqrtVal / (2 * a)
+                formattedReal := qs.formatDouble(realPart)
+                formattedImaginary := qs.formatDouble(imaginaryPart)
+
+                // Build output similar to the Java version.
+                result := "x1 = "
+                if formattedReal != "0" </span><span class="cov8" title="1">{
+                        result += formattedReal + " + "
+                }</span>
+                <span class="cov8" title="1">if formattedImaginary != "1" </span><span class="cov8" title="1">{
+                        result += formattedImaginary
+                }</span>
+                <span class="cov8" title="1">result += "i\nx2 = "
+                if formattedReal != "0" </span><span class="cov8" title="1">{
+                        result += formattedReal + " - "
+                }</span> else<span class="cov8" title="1"> {
+                        result += "-"
+                }</span>
+                <span class="cov8" title="1">if formattedImaginary != "1" </span><span class="cov8" title="1">{
+                        result += formattedImaginary
+                }</span>
+                <span class="cov8" title="1">result += "i"
+                return result, nil</span>
+        }
+
+        // For real roots.
+        <span class="cov8" title="1">sqrtVal := qs.sqrtByNewton(discriminant)
+        q := -0.5 * (b + float64(qs.sign(b))*sqrtVal)
+        x1 := qs.formatDouble(q / a)
+        x2 := qs.formatDouble(c / q)
+        result := "x1 = " + x1
+        if x1 != x2 </span><span class="cov8" title="1">{
+                result += "\nx2 = " + x2
+        }</span>
+        <span class="cov8" title="1">return result, nil</span>
+}
+
+// sign returns 1 if b &gt; 0, otherwise -1 (also when b equals 0).
+func (qs *QuadraticSolver) sign(b float64) int <span class="cov8" title="1">{
+        if b &gt; 0 </span><span class="cov8" title="1">{
+                return 1
+        }</span>
+        <span class="cov8" title="1">return -1</span>
+}
+
+// sqrtByNewton computes the square root of value using Newton's Method.
+func (qs *QuadraticSolver) sqrtByNewton(value float64) float64 <span class="cov8" title="1">{
+        if value == 0 </span><span class="cov8" title="1">{
+                return 0
+        }</span>
+        <span class="cov8" title="1">previous := (1 + value) / 2
+        var result float64
+        for </span><span class="cov8" title="1">{
+                result = (previous + value/previous) / 2
+                if math.Abs(previous-result) &lt; qs.ErrorThreshold </span><span class="cov8" title="1">{
+                        break</span>
+                }
+                <span class="cov8" title="1">previous = result</span>
+        }
+        <span class="cov8" title="1">return result</span>
+}
+
+// formatDouble formats a float64 such that if the value is an integer,
+// no decimal part is shown.
+func (qs *QuadraticSolver) formatDouble(value float64) string <span class="cov8" title="1">{
+        if value == math.Floor(value) </span><span class="cov8" title="1">{
+                return fmt.Sprintf("%.0f", value)
+        }</span>
+        <span class="cov8" title="1">return fmt.Sprintf("%g", value)</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
